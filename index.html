@@ -402,7 +402,7 @@ h1 { margin: 2px 0 0; font-size: 28px; font-weight: 600; letter-spacing: -0.01em
   }
 
   /* ---------- furniture ---------- */
-  function bed(g, side, cx, cz, headH) {
+  function bed(g, side, cx, cz, headH, niche) {
     var b = new THREE.Group(); g.add(b);
     if (side === 'w') { b.rotation.y = Math.PI / 2; b.position.set(cx, 0, cz); }
     if (side === 'e') { b.rotation.y = -Math.PI / 2; b.position.set(cx, 0, cz); }
@@ -425,9 +425,26 @@ h1 { margin: 2px 0 0; font-size: 28px; font-weight: 600; letter-spacing: -0.01em
     var p4 = rbox(0.10, 0.58, 0.58, 0.76, 0.22, 0.36, 0.06, M.pillow, b); p4.rotation.x = -0.28;
     var c1 = rbox(-0.20, 0.20, 0.60, 0.88, 0.36, 0.46, 0.05, M.pinkFab, b); c1.rotation.x = -0.22;
     var c2 = rbox(-0.50, -0.18, 0.60, 0.84, 0.38, 0.47, 0.05, M.knit, b); c2.rotation.x = -0.22; c2.rotation.z = 0.08;
-    rbox(-0.73, 0.73, 0.30, headH, -0.075, -0.045, 0.006, M.head, b);
     var n = 8, sw = 1.46 / n;
-    for (var s = 0; s < n; s++) rbox(-0.73 + s * sw + 0.004, -0.73 + (s + 1) * sw - 0.004, 0.32, headH - 0.01, -0.06, 0.0, 0.035, M.head, b);
+    if (niche) {
+      /* painel de cabeceira com nicho passante, tomadas e LED */
+      rbox(-0.73, 0.73, 0, 1.30, -0.12, -0.10, 0.004, M.wood, b);
+      rbox(-0.73, 0.73, 0, 0.30, -0.10, 0, 0.004, M.wood, b);
+      for (var s = 0; s < n; s++) rbox(-0.73 + s * sw + 0.004, -0.73 + (s + 1) * sw - 0.004, 0.30, 0.90, -0.10, 0.0, 0.035, M.head, b);
+      rbox(-0.73, 0.73, 0.90, 0.93, -0.10, 0.0, 0.004, M.wood, b);
+      rbox(-0.73, -0.71, 0.93, 1.08, -0.10, 0.0, 0.003, M.wood, b);
+      rbox(0.71, 0.73, 0.93, 1.08, -0.10, 0.0, 0.003, M.wood, b);
+      rbox(-0.73, 0.73, 1.08, 1.30, -0.10, 0.0, 0.004, M.wood, b);
+      rbox(-0.70, 0.70, 1.072, 1.08, -0.03, -0.012, 0.002, M.led, b, true);
+      rbox(-0.66, -0.58, 0.965, 1.045, -0.10, -0.094, 0.004, M.lacqW, b);
+      rbox(0.58, 0.66, 0.965, 1.045, -0.10, -0.094, 0.004, M.lacqW, b);
+      rbox(-0.55, -0.50, 0.97, 1.04, -0.10, -0.094, 0.004, M.lacqW, b);
+      var ph = rbox(0.30, 0.37, 0.93, 1.07, -0.085, -0.077, 0.004, M.black, b); ph.rotation.x = -0.15;
+      var nl = new THREE.PointLight(0xffd8a0, 0.25, 1.2, 2); nl.position.set(0, 1.04, -0.04); b.add(nl);
+    } else {
+      rbox(-0.73, 0.73, 0.30, headH, -0.075, -0.045, 0.006, M.head, b);
+      for (var s2 = 0; s2 < n; s2++) rbox(-0.73 + s2 * sw + 0.004, -0.73 + (s2 + 1) * sw - 0.004, 0.32, headH - 0.01, -0.06, 0.0, 0.035, M.head, b);
+    }
   }
 
   function chair(g, x, z, rot) {
@@ -525,12 +542,9 @@ h1 { margin: 2px 0 0; font-size: 28px; font-weight: 600; letter-spacing: -0.01em
 
   /* opção 1: cabeceira na parede da porta */
   (function (g) {
-    bed(g, 'w', 0.075, 2.50, 1.10);
-    rbox(0, 0.15, 1.10, 1.135, 1.78, 3.20, 0.006, M.wood, g);
-    rbox(0.13, 0.145, 1.09, 1.10, 1.80, 3.18, 0.002, M.led, g, true);
+    bed(g, 'w', 0.12, 2.50, 1.10, true);
     sconce(g, 0.0, 1.48, 1.95, 1, 0); sconce(g, 0.0, 1.48, 3.05, 1, 0);
-    art(g, 0.0, 0.025, 1.32, 1.92, 2.22, 2.78);
-    vase(g, 0.07, 1.135, 1.90);
+    art(g, 0.0, 0.025, 1.42, 1.98, 2.22, 2.78);
     /* bancada sob a janela */
     rbox(2.27, W, 0.72, 0.75, 1.30, 2.20, 0.008, M.wood, g);
     rbox(2.29, W, 0, 0.72, 1.30, 1.325, 0.004, M.lacqW, g);
@@ -562,7 +576,7 @@ h1 { margin: 2px 0 0; font-size: 28px; font-weight: 600; letter-spacing: -0.01em
   /* opção 2: cabeceira na parede da janela */
   (function (g) {
     bed(g, 'e', W - 0.075, 2.00, 0.95);
-    nightstand(g, 2.30, 2.70, 2.75, 3.15, 'n');
+    nightstand(g, 2.32, 2.70, 0.98, 1.26, 'w');
     sconce(g, W, 1.48, 2.95, -1, 0);
     rbox(0, 0.80, 0.72, 0.75, 2.70, D, 0.008, M.wood, g);
     rbox(0, 0.025, 0, 0.72, 2.72, D, 0.004, M.lacqW, g);
@@ -582,12 +596,9 @@ h1 { margin: 2px 0 0; font-size: 28px; font-weight: 600; letter-spacing: -0.01em
 
   /* opção 3: cabeceira na parede oposta ao armário */
   (function (g) {
-    bed(g, 's', 1.57, D - 0.075, 1.10);
-    rbox(0.87, 2.27, 1.10, 1.135, D - 0.15, D, 0.006, M.wood, g);
-    rbox(0.89, 2.25, 1.09, 1.10, D - 0.145, D - 0.13, 0.002, M.led, g, true);
+    bed(g, 's', 1.57, D - 0.12, 1.10, true);
     sconce(g, 1.00, 1.48, D, 0, -1); sconce(g, 2.14, 1.48, D, 0, -1);
-    art(g, 1.30, 1.84, 1.32, 1.92, D - 0.025, D);
-    vase(g, 1.25, 1.135, D - 0.07);
+    art(g, 1.30, 1.84, 1.42, 1.98, D - 0.025, D);
     nightstand(g, 2.30, 2.70, 2.80, D, 'n');
     rbox(0, 0.84, 0.72, 0.75, 2.70, D, 0.008, M.wood, g);
     rbox(0, 0.025, 0, 0.72, 2.72, D, 0.004, M.lacqW, g);

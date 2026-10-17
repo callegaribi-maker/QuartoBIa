@@ -3,6 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta http-equiv="Cache-Control" content="no-cache">
 <style>[hidden]{display:none!important} body{margin:0}</style>
 <title>Quarto em 3D</title>
 <meta name="claude:viewport-fit-sides" content="cover">
@@ -98,7 +99,7 @@ h1 { margin: 2px 0 0; font-size: 28px; font-weight: 600; letter-spacing: -0.01em
       <div class="fact"><span>Acesso à cama</span><strong id="f-bed">1 lado</strong></div>
     </div>
   </div>
-  <div class="note">Modelo com as medidas do projeto. Medidas da janela, do armário e do pé-direito ainda a confirmar no local.</div>
+  <div class="note">Modelo com as medidas do projeto. Medidas da janela, do armário e do pé-direito ainda a confirmar no local. Versão 3 (17/10, 20h35).</div>
 </div>
 
 <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
@@ -115,7 +116,7 @@ h1 { margin: 2px 0 0; font-size: 28px; font-weight: 600; letter-spacing: -0.01em
   var W = 2.72, D = 3.20, H = 2.60, T = 0.12, WX = 0.87;
   var OPTS = {
     1: { title: 'Cabeceira na parede da porta', text: 'Melhor para estudar e circular. A frente do armário fica livre, com 1,10 m até a cama. A bancada de 0,90 m fica sob a janela, começando a 0,60 m do armário, e continua como rack baixo de frente para a cama.', desk: '0,90 m', ward: '1,10 m', bed: '1 lado' },
-    2: { title: 'Cabeceira na parede da janela', text: 'A cama tem acesso pelos dois lados e a janela fica atrás da cabeceira, que é mais baixa para não tapá-la. A bancada é compacta e fica no canto da porta.', desk: '0,80 m', ward: '0,60 m', bed: '2 lados' },
+    2: { title: 'Cabeceira na parede da janela', text: 'A cama fica encostada na parede de baixo, com a cabeceira na parede da janela, mais baixa para não tapá-la. O criado-mudo fica do lado do armário e sobra 1,10 m livre na frente das portas de correr. A bancada é compacta e fica no canto da porta.', desk: '0,80 m', ward: '1,10 m', bed: '1 lado' },
     3: { title: 'Cabeceira na parede oposta ao armário', text: 'A cama fica no eixo do quarto, de frente para quem entra, com acesso pelos dois lados. A bancada no canto também faz o papel de criado-mudo. A TV fica presa no teto, na frente do armário, com a base a 1,92 m do piso.', desk: '0,84 m', ward: '0,60 m', bed: '2 lados' }
   };
 
@@ -575,8 +576,8 @@ h1 { margin: 2px 0 0; font-size: 28px; font-weight: 600; letter-spacing: -0.01em
 
   /* opção 2: cabeceira na parede da janela */
   (function (g) {
-    bed(g, 'e', W - 0.075, 2.00, 0.95);
-    nightstand(g, 2.32, 2.70, 0.98, 1.26, 'w');
+    bed(g, 'e', W - 0.075, 2.50, 0.95);
+    nightstand(g, 2.32, 2.70, 1.38, 1.76, 'w');
     sconce(g, W, 1.48, 2.95, -1, 0);
     rbox(0, 0.80, 0.72, 0.75, 2.70, D, 0.008, M.wood, g);
     rbox(0, 0.025, 0, 0.72, 2.72, D, 0.004, M.lacqW, g);

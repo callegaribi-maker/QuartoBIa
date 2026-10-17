@@ -99,7 +99,7 @@ h1 { margin: 2px 0 0; font-size: 28px; font-weight: 600; letter-spacing: -0.01em
       <div class="fact"><span>Acesso à cama</span><strong id="f-bed">1 lado</strong></div>
     </div>
   </div>
-  <div class="note">Modelo com as medidas do projeto. Medidas da janela, do armário e do pé-direito ainda a confirmar no local. Versão 5 (17/10, 20h55).</div>
+  <div class="note">Modelo com as medidas do projeto. Medidas da janela, do armário e do pé-direito ainda a confirmar no local. Versão 6 (17/10, 21h00).</div>
 </div>
 
 <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
@@ -116,7 +116,7 @@ h1 { margin: 2px 0 0; font-size: 28px; font-weight: 600; letter-spacing: -0.01em
   var W = 2.72, D = 3.20, H = 2.60, T = 0.12, WX = 0.87;
   var OPTS = {
     1: { title: 'Cabeceira na parede da porta', text: 'Melhor para estudar e circular. A frente do armário fica livre, com 1,10 m até a cama. A bancada de 0,90 m fica sob a janela, começando a 0,60 m do armário, e continua como rack baixo de frente para a cama.', desk: '0,90 m', ward: '1,10 m', bed: '1 lado' },
-    2: { title: 'Cabeceira na parede da janela', text: 'A cama fica encostada na parede de baixo, com a cabeceira na parede da janela, mais baixa para não tapá-la, com o nicho de tomadas logo abaixo do peitoril. O nicho dobra o canto, passa atrás da cama na mesma altura e termina na bancada, formando um L. O criado-mudo fica do lado do armário e sobra 1,06 m livre na frente das portas de correr.', desk: '0,66 m', ward: '1,06 m', bed: '1 lado' },
+    2: { title: 'Cabeceira na parede da janela', text: 'A cama fica encostada na parede de baixo, com a cabeceira na parede da janela, mais baixa para não tapá-la, com o nicho de tomadas logo abaixo do peitoril. A cabeceira dobra o canto, acompanha a lateral da cama com os mesmos gomos e nicho e emenda na bancada, formando um L. A TV fica na parede da porta, de frente para a cama. O criado-mudo fica do lado do armário e sobra 1,06 m livre na frente das portas de correr.', desk: '0,66 m', ward: '1,06 m', bed: '1 lado' },
     3: { title: 'Cabeceira na parede oposta ao armário', text: 'A cama fica no eixo do quarto, de frente para quem entra, com acesso pelos dois lados. A bancada no canto também faz o papel de criado-mudo. A TV fica presa no teto, na frente do armário, com a base a 1,92 m do piso.', desk: '0,84 m', ward: '0,60 m', bed: '2 lados' }
   };
 
@@ -584,12 +584,16 @@ h1 { margin: 2px 0 0; font-size: 28px; font-weight: 600; letter-spacing: -0.01em
     sconce(g, W, 1.48, 2.95, -1, 0);
     /* braço do L na parede de baixo: nicho atrás da cama que termina na bancada */
     rbox(0.66, W - 0.12, 0, 0.30, D - 0.025, D, 0.004, M.wood, g);
-    rbox(0.66, W - 0.12, 0.30, 0.72, D - 0.025, D, 0.01, M.head, g);
+    var gl = (W - 0.12 - 0.66) / 10;
+    for (var gi = 0; gi < 10; gi++) rbox(0.66 + gi * gl + 0.003, 0.66 + (gi + 1) * gl - 0.003, 0.30, 0.72, D - 0.03, D, 0.014, M.head, g);
     rbox(0, W - 0.12, 0.72, 0.75, D - 0.15, D, 0.004, M.wood, g);
-    rbox(0.66, W - 0.12, 0.75, 0.90, D - 0.004, D - 0.001, 0.001, M.nicheBack, g, true);
-    rbox(0.66, 0.68, 0.75, 0.90, D - 0.15, D, 0.003, M.wood, g);
-    rbox(0.66, W - 0.12, 0.90, 1.02, D - 0.15, D, 0.004, M.wood, g);
-    rbox(0.70, W - 0.14, 0.892, 0.90, D - 0.14, D - 0.125, 0.002, M.led, g, true);
+    rbox(0, W - 0.12, 0.75, 0.90, D - 0.004, D - 0.001, 0.001, M.nicheBack, g, true);
+    rbox(0, 0.02, 0.75, 0.90, D - 0.15, D, 0.003, M.wood, g);
+    rbox(0, W - 0.12, 0.90, 1.02, D - 0.15, D, 0.004, M.wood, g);
+    rbox(0.03, W - 0.14, 0.892, 0.90, D - 0.14, D - 0.125, 0.002, M.led, g, true);
+    /* TV na parede da porta, de frente para a cama */
+    rbox(0.005, 0.04, 1.20, 1.77, 1.96, 2.92, 0.006, M.black, g);
+    box(0.04, 0.042, 1.215, 1.755, 1.975, 2.905, M.screen, g, true);
     rbox(1.10, 1.18, 0.79, 0.87, D - 0.007, D - 0.002, 0.004, M.lacqW, g);
     rbox(2.10, 2.18, 0.79, 0.87, D - 0.007, D - 0.002, 0.004, M.lacqW, g);
     var nph = rbox(1.60, 1.67, 0.75, 0.89, D - 0.03, D - 0.022, 0.004, M.black, g); nph.rotation.x = 0.15;
@@ -599,13 +603,13 @@ h1 { margin: 2px 0 0; font-size: 28px; font-weight: 600; letter-spacing: -0.01em
     rbox(0, 0.025, 0, 0.72, 2.72, D, 0.004, M.lacqW, g);
     rbox(0.635, 0.66, 0, 0.72, 2.72, D - 0.15, 0.004, M.lacqW, g);
     rbox(0.03, 0.63, 0.56, 0.72, 2.72, 2.745, 0.004, M.lacq, g);
-    rbox(0, 0.66, 1.23, 1.26, 2.95, D, 0.005, M.wood, g);
-    rbox(0, 0.66, 1.58, 1.61, 2.95, D, 0.005, M.wood, g);
-    rbox(0.02, 0.64, 1.22, 1.23, 2.97, D - 0.02, 0.002, M.led, g, true);
-    rbox(0.02, 0.64, 1.57, 1.58, 2.97, D - 0.02, 0.002, M.led, g, true);
-    books(g, 0.05, 0.40, 1.26, 2.95, D);
-    plant(g, 0.55, 1.61, 3.08);
-    laptop(g, 0.33, 2.96, Math.PI);
+    rbox(0, 0.66, 1.32, 1.35, 2.97, D, 0.005, M.wood, g);
+    rbox(0, 0.66, 1.62, 1.65, 2.97, D, 0.005, M.wood, g);
+    rbox(0.02, 0.64, 1.31, 1.32, 2.99, D - 0.02, 0.002, M.led, g, true);
+    rbox(0.02, 0.64, 1.61, 1.62, 2.99, D - 0.02, 0.002, M.led, g, true);
+    books(g, 0.05, 0.40, 1.35, 2.98, D);
+    plant(g, 0.55, 1.65, 3.09);
+    laptop(g, 0.33, 2.88, Math.PI);
     chair(g, 0.33, 2.40, 0);
   })(groups[2]);
 

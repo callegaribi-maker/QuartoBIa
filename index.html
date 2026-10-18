@@ -57,6 +57,14 @@ h1 { margin: 2px 0 0; font-size: 28px; font-weight: 600; letter-spacing: -0.01em
 .fact span { font-size: 12px; color: var(--muted); }
 .fact strong { font-family: var(--font-data); font-weight: 500; font-size: 16px; font-variant-numeric: tabular-nums; }
 .note { font-size: 13px; color: var(--muted); }
+.custom-wrap { display: flex; flex-direction: column; gap: 8px; }
+.custom-title { font-size: 12px; color: var(--muted); letter-spacing: 0.06em; text-transform: uppercase; }
+.custom { display: grid; grid-template-columns: repeat(5, minmax(0, 1fr)); gap: 12px 14px; }
+.custom label { display: flex; flex-direction: column; gap: 4px; font-size: 12px; color: var(--muted); min-width: 0; }
+.custom select { font: inherit; font-size: 14px; color: var(--fg); background: var(--surface); border: 1px solid var(--line); border-radius: 7px; padding: 8px 10px; min-height: 40px; width: 100%; }
+.custom select:focus-visible { outline: 2px solid var(--accent); outline-offset: 1px; }
+@media (max-width: 900px) { .custom { grid-template-columns: repeat(3, minmax(0, 1fr)); } }
+@media (max-width: 560px) { .custom { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
 .err { position: absolute; inset: 0; display: grid; place-items: center; padding: 24px; text-align: center; color: var(--muted); }
 @media (max-width: 720px) {
   .info { grid-template-columns: minmax(0, 1fr); }
@@ -71,7 +79,12 @@ h1 { margin: 2px 0 0; font-size: 28px; font-weight: 600; letter-spacing: -0.01em
       <div class="eyebrow">2,72 × 3,20 m · pé-direito 2,60 m</div>
       <h1>Quarto em 3D</h1>
     </div>
-    <div class="seg" role="group" aria-label="Escolher opção de layout">
+    <div class="seg pal" role="group" aria-label="Escolher paleta de cores">
+      <button type="button" id="pal1" data-pal="1" aria-pressed="false">Rosé</button>
+      <button type="button" id="pal2" data-pal="2" aria-pressed="false">Sálvia</button>
+      <button type="button" id="pal3" data-pal="3" aria-pressed="true">Azul</button>
+    </div>
+    <div class="seg ops" role="group" aria-label="Escolher opção de layout">
       <button type="button" id="op1" data-op="1" aria-pressed="true">Opção 1</button>
       <button type="button" id="op2" data-op="2" aria-pressed="false">Opção 2</button>
       <button type="button" id="op3" data-op="3" aria-pressed="false">Opção 3</button>
@@ -88,6 +101,25 @@ h1 { margin: 2px 0 0; font-size: 28px; font-weight: 600; letter-spacing: -0.01em
     <div class="hint">Arraste para girar · pinça ou roda para aproximar</div>
   </div>
 
+  <div class="custom-wrap">
+    <div class="custom-title">Acabamentos</div>
+    <div class="custom" role="group" aria-label="Personalizar acabamentos">
+      <label for="c-wall">Paredes<select id="c-wall"></select></label>
+      <label for="c-accent">Parede da cabeceira<select id="c-accent"></select></label>
+      <label for="c-wood">Madeira<select id="c-wood"></select></label>
+      <label for="c-head">Estofado da cabeceira<select id="c-head"></select></label>
+      <label for="c-textile">Almofadas e peseira<select id="c-textile"></select></label>
+      <label for="c-chair">Cadeira<select id="c-chair"></select></label>
+      <label for="c-metal">Metais<select id="c-metal"></select></label>
+      <label for="c-duvet">Roupa de cama<select id="c-duvet"></select></label>
+      <label for="c-mirror">Espelho no armário<select id="c-mirror"></select></label>
+      <label for="c-floor">Piso<select id="c-floor"></select></label>
+      <label for="c-rug">Tapete<select id="c-rug"></select></label>
+      <label for="c-blind">Persiana<select id="c-blind"></select></label>
+      <label for="c-light">Iluminação<select id="c-light"></select></label>
+    </div>
+  </div>
+
   <div class="info">
     <div>
       <h2 id="op-title">Cabeceira na parede da porta</h2>
@@ -99,11 +131,12 @@ h1 { margin: 2px 0 0; font-size: 28px; font-weight: 600; letter-spacing: -0.01em
       <div class="fact"><span>Acesso à cama</span><strong id="f-bed">1 lado</strong></div>
     </div>
   </div>
-  <div class="note">Modelo com as medidas do projeto. Medidas da janela, do armário e do pé-direito ainda a confirmar no local. Versão 6 (17/10, 21h00).</div>
+  <div class="note">Modelo com as medidas do projeto. Medidas da janela, do armário e do pé-direito ainda a confirmar no local. Versão 9 (17/10, 21h20).</div>
 </div>
 
 <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/controls/OrbitControls.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/objects/Reflector.js"></script>
 <script>
 (function () {
   var stage = document.getElementById('stage');
@@ -150,7 +183,7 @@ h1 { margin: 2px 0 0; font-size: 28px; font-weight: 600; letter-spacing: -0.01em
   } catch (err) {}
 
   /* lights */
-  scene.add(new THREE.HemisphereLight(0xfff8ee, 0xcbb9a2, 0.55));
+  var hemi = new THREE.HemisphereLight(0xfff8ee, 0xcbb9a2, 0.55); scene.add(hemi);
   var sun = new THREE.DirectionalLight(0xfff0d8, 1.7);
   sun.position.set(7, 3.4, 1.0);
   sun.target.position.set(1.0, 0, 1.9);
@@ -182,7 +215,7 @@ h1 { margin: 2px 0 0; font-size: 28px; font-weight: 600; letter-spacing: -0.01em
     }
   }
   var woodTex = canvasTex(512, function (x, s) {
-    x.fillStyle = '#D9B98E'; x.fillRect(0, 0, s, s);
+    x.fillStyle = '#EFE3D0'; x.fillRect(0, 0, s, s);
     for (var i = 0; i < 170; i++) {
       var y = rnd() * s, amp = 2 + rnd() * 6, ph = rnd() * 6, f = 0.004 + rnd() * 0.01;
       x.strokeStyle = (rnd() < 0.7 ? 'rgba(140,95,50,' : 'rgba(255,240,215,') + (0.04 + rnd() * 0.12) + ')';
@@ -204,8 +237,8 @@ h1 { margin: 2px 0 0; font-size: 28px; font-weight: 600; letter-spacing: -0.01em
     }, rep || 6, rep || 6);
   };
   var knitTex = canvasTex(256, function (x, s) {
-    x.fillStyle = '#D69497'; x.fillRect(0, 0, s, s);
-    x.strokeStyle = 'rgba(120,50,55,0.25)'; x.lineWidth = 2;
+    x.fillStyle = '#F0F0F0'; x.fillRect(0, 0, s, s);
+    x.strokeStyle = 'rgba(0,0,0,0.18)'; x.lineWidth = 2;
     for (var r = 0; r < s; r += 10) for (var c = 0; c < s; c += 10) {
       x.beginPath(); x.moveTo(c, r); x.lineTo(c + 5, r + 8); x.lineTo(c + 10, r); x.stroke();
     }
@@ -225,14 +258,34 @@ h1 { margin: 2px 0 0; font-size: 28px; font-weight: 600; letter-spacing: -0.01em
     x.fillStyle = 'rgba(150,138,122,0.55)';
     x.fillRect(0, 0, s, 3); x.fillRect(0, s / 2 - 1, s, 3); x.fillRect(0, 0, 3, s); x.fillRect(s / 2 - 1, 0, 3, s);
   }, W / 1.2, D / 1.2);
+  var plankTex = canvasTex(1024, function (x, s) {
+    x.fillStyle = '#EADBC4'; x.fillRect(0, 0, s, s);
+    var rows = 6, ph = s / rows;
+    for (var rw = 0; rw < rows; rw++) {
+      var y0 = rw * ph;
+      x.fillStyle = 'rgba(' + (rnd() < 0.5 ? '255,250,240,' : '150,110,70,') + (0.05 + rnd() * 0.08) + ')';
+      x.fillRect(0, y0, s, ph);
+      for (var gL = 0; gL < 26; gL++) {
+        var gy = y0 + rnd() * ph, amp = 1 + rnd() * 3, f = 0.005 + rnd() * 0.01, phs = rnd() * 6;
+        x.strokeStyle = 'rgba(130,90,50,' + (0.05 + rnd() * 0.1) + ')'; x.lineWidth = 0.6 + rnd() * 1.4;
+        x.beginPath();
+        for (var px = 0; px <= s; px += 8) { var py = gy + Math.sin(px * f + phs) * amp; if (px === 0) x.moveTo(px, py); else x.lineTo(px, py); }
+        x.stroke();
+      }
+      x.fillStyle = 'rgba(110,80,50,0.45)'; x.fillRect(0, y0, s, 2);
+      var sx = rnd() * s * 0.6;
+      while (sx < s) { x.fillRect(sx, y0, 2, ph); sx += s * (0.35 + rnd() * 0.6); }
+    }
+    noise(x, s, 15000, 0.05);
+  }, W / 1.2, D / 1.2);
   var wallTex = canvasTex(512, function (x, s) {
-    x.fillStyle = '#E8DED2'; x.fillRect(0, 0, s, s);
+    x.fillStyle = '#F7F7F7'; x.fillRect(0, 0, s, s);
     noise(x, s, 25000, 0.035, 2);
   }, 2, 2);
   var juteTex = canvasTex(512, function (x, s) {
-    x.fillStyle = '#C8AC84'; x.fillRect(0, 0, s, s);
+    x.fillStyle = '#EEE8DE'; x.fillRect(0, 0, s, s);
     for (var r = 4; r < s / 2; r += 5) {
-      x.strokeStyle = (r % 10 < 5) ? 'rgba(120,90,55,0.35)' : 'rgba(240,225,195,0.35)';
+      x.strokeStyle = (r % 10 < 5) ? 'rgba(90,80,65,0.30)' : 'rgba(255,255,255,0.4)';
       x.lineWidth = 2.5; x.beginPath(); x.arc(s / 2, s / 2, r, 0, Math.PI * 2); x.stroke();
     }
     noise(x, s, 8000, 0.1);
@@ -268,14 +321,15 @@ h1 { margin: 2px 0 0; font-size: 28px; font-weight: 600; letter-spacing: -0.01em
     lacqW: mat(0xF4F0EA, { roughness: 0.4 }),
     gap: mat(0xB9AE9F, { roughness: 1 }),
     wood: mat(0xffffff, { map: woodTex, roughness: 0.55 }),
-    head: mat(0xffffff, { map: fabricTex('#D6C5AF', 8), roughness: 1 }),
-    base: mat(0xffffff, { map: fabricTex('#CDBCA6', 8), roughness: 1 }),
+    head: mat(0xffffff, { map: fabricTex('#F2F2F2', 8), roughness: 1 }),
+    base: mat(0xffffff, { map: fabricTex('#F2F2F2', 8), roughness: 1 }),
+    accentWall: mat(0xffffff, { map: wallTex, roughness: 0.95 }),
     mattress: mat(0xffffff, { map: fabricTex('#F7F3ED', 10), roughness: 1 }),
     duvet: mat(0xffffff, { map: fabricTex('#F5F0E9', 6), roughness: 1 }),
     pillow: mat(0xffffff, { map: fabricTex('#FBF8F3', 6), roughness: 1 }),
     knit: mat(0xffffff, { map: knitTex, roughness: 1 }),
-    pinkFab: mat(0xffffff, { map: fabricTex('#DDA3A5', 8), roughness: 1 }),
-    chairFab: mat(0xffffff, { map: fabricTex('#E0A6A8', 10), roughness: 0.95 }),
+    pinkFab: mat(0xffffff, { map: fabricTex('#F2F2F2', 8), roughness: 1 }),
+    chairFab: mat(0xffffff, { map: fabricTex('#F2F2F2', 10), roughness: 0.95 }),
     jute: mat(0xffffff, { map: juteTex, roughness: 1 }),
     metal: mat(0xC9C6C2, { metalness: 0.85, roughness: 0.28 }),
     chrome: mat(0xE4E4E4, { metalness: 1, roughness: 0.15 }),
@@ -288,7 +342,7 @@ h1 { margin: 2px 0 0; font-size: 28px; font-weight: 600; letter-spacing: -0.01em
     glow: mat(0xFFF4DE, { emissive: 0xFFD9A0, emissiveIntensity: 1.2 }),
     led: mat(0xFFF0D2, { emissive: 0xFFD49A, emissiveIntensity: 1.6 }),
     downlight: mat(0xFFFFFF, { emissive: 0xFFF2DC, emissiveIntensity: 1.4 }),
-    blind: mat(0xffffff, { map: fabricTex('#EAE2D6', 6), roughness: 1 }),
+    blind: mat(0xffffff, { map: fabricTex('#F2F2F2', 6), roughness: 1 }),
     leaf: mat(0x557D3E, { roughness: 0.8 }),
     leaf2: mat(0x6F9A50, { roughness: 0.8 }),
     pot: mat(0xEFE9E1, { roughness: 0.7 }),
@@ -401,6 +455,15 @@ h1 { margin: 2px 0 0; font-size: 28px; font-weight: 600; letter-spacing: -0.01em
     rbox(x0, x1, 0.05, H - 0.06, zf - 0.025, zf, 0.006, M.lacq, ward);
     var hx = (i === 0) ? x1 - 0.05 : x0 + 0.03;
     rbox(hx, hx + 0.018, 0.80, 1.60, zf, zf + 0.018, 0.006, M.metal, ward);
+  }
+  /* porta do meio espelhada (opcional) */
+  var mirrors = [];
+  if (THREE.Reflector) {
+    for (var mi = 0; mi < 3; mi++) {
+      var mr = new THREE.Reflector(new THREE.PlaneGeometry(pw - 0.03, H - 0.16), { textureWidth: 768, textureHeight: 768, color: 0xd5dadd });
+      mr.position.set(WX + (mi + 0.5) * pw, (0.05 + H - 0.06) / 2, mi === 1 ? 0.7065 : 0.6765);
+      mr.visible = false; ward.add(mr); mirrors.push(mr);
+    }
   }
 
   /* ---------- furniture ---------- */
@@ -529,9 +592,10 @@ h1 { margin: 2px 0 0; font-size: 28px; font-weight: 600; letter-spacing: -0.01em
     var sc = rbox(-0.16, 0.16, 0, 0.21, -0.006, 0.0, 0.004, M.metal, lg); sc.position.set(0, 0.105, -0.11); sc.rotation.x = -0.25;
     var sp = box(-0.15, 0.15, 0.01, 0.20, 0.001, 0.003, M.screen, lg, true); sp.position.set(0, 0.105, -0.107); sp.rotation.x = -0.25;
   }
+  var rugs = [];
   function rug(g, x, z, r) {
     var m = new THREE.Mesh(new THREE.CylinderGeometry(r, r, 0.012, 64), [M.jute, M.jute, M.jute]);
-    m.position.set(x, 0.006, z); m.receiveShadow = true; g.add(m);
+    m.position.set(x, 0.006, z); m.receiveShadow = true; g.add(m); rugs.push(m);
   }
   function ceilingTV(g, cx, cz, y0) {
     rbox(cx - 0.49, cx + 0.49, y0, y0 + 0.57, cz - 0.03, cz + 0.0, 0.01, M.black, g);
@@ -543,10 +607,17 @@ h1 { margin: 2px 0 0; font-size: 28px; font-weight: 600; letter-spacing: -0.01em
 
   var groups = { 1: new THREE.Group(), 2: new THREE.Group(), 3: new THREE.Group() };
   for (var gk in groups) scene.add(groups[gk]);
+  /* parede de destaque atrás da cabeceira, escondida junto com a parede quando a câmera passa por trás */
+  var accents = [];
+  function accentWall(g, x0, x1, z0, z1, side) {
+    var m = box(x0, x1, 0, H, z0, z1, M.accentWall, g, true); m.receiveShadow = true;
+    accents.push({ m: m, w: side });
+  }
 
   /* opção 1: cabeceira na parede da porta */
   (function (g) {
     bed(g, 'w', 0.12, 2.50, 1.10, { y: 0.90, top: 1.30 });
+    accentWall(g, 0, 0.003, 1.78, D, 'w');
     sconce(g, 0.0, 1.48, 1.95, 1, 0); sconce(g, 0.0, 1.48, 3.05, 1, 0);
     art(g, 0.0, 0.025, 1.42, 1.98, 2.22, 2.78);
     /* bancada sob a janela */
@@ -580,7 +651,9 @@ h1 { margin: 2px 0 0; font-size: 28px; font-weight: 600; letter-spacing: -0.01em
   /* opção 2: cabeceira na parede da janela */
   (function (g) {
     bed(g, 'e', W - 0.12, 2.44, 0.95, { y: 0.72, top: 1.02 });
+    accentWall(g, 0, W, D - 0.003, D, 's');
     nightstand(g, 2.32, 2.70, 1.30, 1.68, 'w');
+    rug(g, 1.55, 1.22, 0.42);
     sconce(g, W, 1.48, 2.95, -1, 0);
     /* braço do L na parede de baixo: nicho atrás da cama que termina na bancada */
     rbox(0.66, W - 0.12, 0, 0.30, D - 0.025, D, 0.004, M.wood, g);
@@ -616,6 +689,7 @@ h1 { margin: 2px 0 0; font-size: 28px; font-weight: 600; letter-spacing: -0.01em
   /* opção 3: cabeceira na parede oposta ao armário */
   (function (g) {
     bed(g, 's', 1.57, D - 0.12, 1.10, { y: 0.90, top: 1.30 });
+    accentWall(g, 0, W, D - 0.003, D, 's');
     sconce(g, 1.00, 1.48, D, 0, -1); sconce(g, 2.14, 1.48, D, 0, -1);
     art(g, 1.30, 1.84, 1.42, 1.98, D - 0.025, D);
     nightstand(g, 2.30, 2.70, 2.80, D, 'n');
@@ -659,7 +733,7 @@ h1 { margin: 2px 0 0; font-size: 28px; font-weight: 600; letter-spacing: -0.01em
   });
 
   /* options */
-  var opBtns = document.querySelectorAll('.seg button');
+  var opBtns = document.querySelectorAll('.seg.ops button');
   function setOp(n) {
     for (var k in groups) groups[k].visible = (String(k) === String(n));
     opBtns.forEach(function (x) { x.setAttribute('aria-pressed', String(x.dataset.op === String(n))); });
@@ -672,6 +746,71 @@ h1 { margin: 2px 0 0; font-size: 28px; font-weight: 600; letter-spacing: -0.01em
     try { localStorage.setItem('quarto3d-op', String(n)); } catch (err) {}
   }
   opBtns.forEach(function (b) { b.addEventListener('click', function () { setOp(b.dataset.op); }); });
+  /* acabamentos: cada item escolhido separado; as paletas preenchem todos de uma vez */
+  var CH = {
+    wall: { offwhite: ['Off-white', 0xF3F1EC, 0xF4F2EE], areia: ['Areia', 0xEDE4D8, 0xF1ECE4], cru: ['Cru', 0xECE8DF, 0xEDE8DF], cinza: ['Cinza claro', 0xE4E2DE, 0xEEEDEA], greige: ['Greige', 0xDCD6CC, 0xEFEDE8], verdeclaro: ['Verde claro', 0xE3E8DC, 0xF1F2EC], rosaclaro: ['Rosa claro', 0xF1E3DF, 0xF5EEEB], azulclaro: ['Azul claro', 0xE2E9EE, 0xF2F4F5] },
+    accent: { azul: ['Azul petróleo', 0x4F6A7A], marinho: ['Azul marinho', 0x2F3E55], salvia: ['Verde sálvia', 0xA9B59A], oliva: ['Verde oliva', 0x7D8059], rose: ['Rosé queimado', 0xD9B8AE], terracota: ['Terracota', 0xC48A6A], mostarda: ['Mostarda', 0xC99A3E], lilas: ['Lilás', 0xB7A6C4], vinho: ['Vinho', 0x7A3B44], areia: ['Areia escura', 0xC8B49A], cinzamedio: ['Cinza médio', 0x9A9893], grafite: ['Grafite', 0x6B6B6B], nenhuma: ['Igual às paredes', null] },
+    wood: { carvalho: ['Carvalho claro', 0xF2E8D4], amendoa: ['Amêndoa', 0xEBD3AF], freijo: ['Freijó', 0xE6CEA8], nogueira: ['Nogueira', 0xC49C73], cumaru: ['Cumaru', 0xB0865A], cinza: ['Madeira cinza', 0xC9C3BA], branco: ['Laca branca', 0xFAF8F4], preta: ['Laca preta', 0x3A3A3A] },
+    head: { cinza: ['Cinza claro', 0xCFC8BB], offwhite: ['Off-white', 0xEFEBE4], bege: ['Linho bege', 0xD6C5AF], cru: ['Linho cru', 0xE3DACB], rose: ['Rosé', 0xD8A9A3], terracota: ['Terracota', 0xC48A6A], mostarda: ['Mostarda', 0xCFA250], verde: ['Verde', 0xA3AE95], musgo: ['Verde musgo', 0x6F7A55], azul: ['Azul', 0x6F8796], vinho: ['Vinho', 0x8A4A52], grafite: ['Grafite', 0x6E6D6A] },
+    textile: { mostarda: ['Mostarda', 0xD9A441], rose: ['Rosé', 0xD8999B], terracota: ['Terracota', 0xC7744E], verde: ['Verde', 0x8FA07E], azul: ['Azul', 0x5E7C8C], azulclaro: ['Azul claro', 0xA9C0CF], lilas: ['Lilás', 0xB7A6C4], vinho: ['Vinho', 0x8A4A52], cinza: ['Cinza', 0xA9A6A0], branco: ['Branco', 0xF4F1EC], preto: ['Preto', 0x3A3A3A] },
+    chair: { mostarda: ['Mostarda', 0xD9A441], rose: ['Rosé', 0xDFA3A6], terracota: ['Terracota', 0xC7744E], verde: ['Verde', 0x8FA07E], azul: ['Azul', 0x5E7C8C], vinho: ['Vinho', 0x8A4A52], bege: ['Bege', 0xD6C5AF], branca: ['Branca', 0xF2F0EC], cinza: ['Cinza', 0x8F8C87], preta: ['Preta', 0x2E2E2C] },
+    metal: { inox: ['Inox', 0xB9B6B1, 0.85], dourado: ['Dourado', 0xC9A86A, 0.85], champanhe: ['Champanhe', 0xD8C6A3, 0.8], cobre: ['Cobre', 0xB87352, 0.85], preto: ['Preto fosco', 0x2E2E2C, 0.3], branco: ['Branco fosco', 0xF2F2F0, 0.1] },
+    duvet: { branca: ['Branca', 0xFFFFFF], cru: ['Linho cru', 0xF1E9DB], areia: ['Areia', 0xE9DFD0], cinza: ['Cinza claro', 0xDCDAD6], rose: ['Rosé claro', 0xF2DCD8], azul: ['Azul claro', 0xDDE6EC], verde: ['Verde claro', 0xDDE4D5] },
+    mirror: { nao: ['Sem espelho'], meio: ['Porta do meio'], laterais: ['Portas das pontas'], todas: ['Todas as portas'] },
+    floor: { porcelanato: ['Porcelanato claro', 'tile', 0xFFFFFF], bege: ['Porcelanato bege', 'tile', 0xEFE0C8], cimento: ['Cimento queimado', 'tile', 0xBDBAB5], laminado: ['Laminado claro', 'plank', 0xFFFFFF], madeira: ['Madeira média', 'plank', 0xC9A27A], escura: ['Madeira escura', 'plank', 0x8A6A4E] },
+    rug: { juta: ['Juta', 0xD9C29E], offwhite: ['Off-white', 0xFFFFFF], cinza: ['Cinza', 0xBDBAB5], rose: ['Rosé', 0xE6B9B5], verde: ['Verde', 0xB7C3A8], azul: ['Azul', 0x9FB2BF], nenhum: ['Sem tapete', null] },
+    blind: { parede: ['Igual às paredes', null], linho: ['Linho cru', 0xE3DACB], branca: ['Branca', 0xFFFFFF], cinza: ['Cinza', 0xC9C6C0], azul: ['Azul', 0x8FA5B3], rose: ['Rosé', 0xE2C2BC], verde: ['Verde', 0xB7C3A8] },
+    light: { dia: ['Dia'], tarde: ['Fim de tarde'], noite: ['Noite'] }
+  };
+  var lampLights = [];
+  scene.traverse(function (o) { if (o.isPointLight && o !== fill) { o.userData.base = o.intensity; lampLights.push(o); } });
+  var PRESETS = {
+    1: { wall: 'areia', accent: 'rose', wood: 'freijo', head: 'bege', textile: 'rose', chair: 'rose', metal: 'dourado', duvet: 'branca' },
+    2: { wall: 'cru', accent: 'salvia', wood: 'nogueira', head: 'cru', textile: 'terracota', chair: 'terracota', metal: 'preto', duvet: 'cru' },
+    3: { wall: 'offwhite', accent: 'azul', wood: 'carvalho', head: 'cinza', textile: 'mostarda', chair: 'mostarda', metal: 'inox', duvet: 'branca' }
+  };
+  var acab = {}; for (var pk in PRESETS[3]) acab[pk] = PRESETS[3][pk]; acab.mirror = 'nao'; acab.floor = 'porcelanato'; acab.rug = 'juta'; acab.blind = 'parede'; acab.light = 'dia';
+  try {
+    var saved = JSON.parse(localStorage.getItem('quarto3d-acab') || 'null');
+    if (saved) for (var sk in CH) if (saved[sk] && CH[sk][saved[sk]]) acab[sk] = saved[sk];
+  } catch (err) {}
+  var palBtns = document.querySelectorAll('.seg.pal button');
+  Object.keys(CH).forEach(function (key) {
+    var sel = document.getElementById('c-' + key);
+    Object.keys(CH[key]).forEach(function (v) { var o = document.createElement('option'); o.value = v; o.textContent = CH[key][v][0]; sel.appendChild(o); });
+    if (key === 'mirror' && !mirrors.length) sel.disabled = true;
+    sel.addEventListener('change', function () { acab[key] = sel.value; applyAcab(); });
+  });
+  function applyAcab() {
+    var w = CH.wall[acab.wall];
+    M.wall.color.setHex(w[1]); M.lacq.color.setHex(w[2]); M.lacqW.color.setHex(w[2]);
+    var bl = CH.blind[acab.blind]; M.blind.color.setHex(bl[1] === null ? w[2] : bl[1]);
+    var fl = CH.floor[acab.floor]; M.floor.map = fl[1] === 'tile' ? tileTex : plankTex; M.floor.color.setHex(fl[2]); M.floor.roughness = fl[1] === 'tile' ? 0.28 : 0.5; M.floor.needsUpdate = true;
+    var rg = CH.rug[acab.rug]; rugs.forEach(function (r) { r.visible = rg[1] !== null; }); if (rg[1] !== null) M.jute.color.setHex(rg[1]);
+    var LT = { dia: [0.55, 0xfff8ee, 1.7, 0xfff0d8, [7, 3.4, 1.0], 0.45, 0xffffff, 1, 1.05], tarde: [0.42, 0xffe2c4, 1.5, 0xffb877, [7, 1.6, 2.4], 0.5, 0xffc9a0, 1.3, 1.0], noite: [0.1, 0x9fb0d0, 0, 0xffffff, [7, 3.4, 1.0], 0.3, 0x283246, 2.4, 1.1] }[acab.light];
+    hemi.intensity = LT[0]; hemi.color.setHex(LT[1]); sun.intensity = LT[2]; sun.color.setHex(LT[3]); sun.position.set(LT[4][0], LT[4][1], LT[4][2]);
+    fill.intensity = LT[5]; M.sky.color.setHex(LT[6]); renderer.toneMappingExposure = LT[8];
+    M.glow.emissiveIntensity = 1.2 * LT[7]; M.led.emissiveIntensity = 1.6 * LT[7]; M.downlight.emissiveIntensity = 1.4 * LT[7]; M.nicheBack.emissiveIntensity = 0.35 * LT[7];
+    lampLights.forEach(function (l) { l.intensity = l.userData.base * LT[7]; });
+    var a = CH.accent[acab.accent]; M.accentWall.color.setHex(a[1] === null ? w[1] : a[1]);
+    M.wood.color.setHex(CH.wood[acab.wood][1]);
+    M.head.color.setHex(CH.head[acab.head][1]); M.base.color.setHex(CH.head[acab.head][1]);
+    M.knit.color.setHex(CH.textile[acab.textile][1]); M.pinkFab.color.setHex(CH.textile[acab.textile][1]);
+    M.chairFab.color.setHex(CH.chair[acab.chair][1]);
+    var mt = CH.metal[acab.metal]; M.metal.color.setHex(mt[1]); M.metal.metalness = mt[2]; M.metal.roughness = mt[2] > 0.5 ? 0.28 : 0.5;
+    M.duvet.color.setHex(CH.duvet[acab.duvet][1]);
+    var mset = { nao: [], meio: [1], laterais: [0, 2], todas: [0, 1, 2] }[acab.mirror];
+    mirrors.forEach(function (m, i) { m.visible = mset.indexOf(i) >= 0; });
+    Object.keys(CH).forEach(function (key) { document.getElementById('c-' + key).value = acab[key]; });
+    palBtns.forEach(function (x) {
+      var p = PRESETS[x.dataset.pal], same = true;
+      for (var k in p) if (acab[k] !== p[k]) same = false;
+      x.setAttribute('aria-pressed', String(same));
+    });
+    try { localStorage.setItem('quarto3d-acab', JSON.stringify(acab)); } catch (err) {}
+  }
+  palBtns.forEach(function (b) { b.addEventListener('click', function () { var p = PRESETS[b.dataset.pal]; for (var k in p) acab[k] = p[k]; applyAcab(); }); });
+  applyAcab();
   var start = '1';
   try { var s = localStorage.getItem('quarto3d-op'); if (s && OPTS[s]) start = s; } catch (err) {}
   if (/^#op[123]$/.test(location.hash)) start = location.hash.slice(3);
@@ -700,6 +839,7 @@ h1 { margin: 2px 0 0; font-size: 28px; font-weight: 600; letter-spacing: -0.01em
     walls.s.visible = c.z < D;
     walls.w.visible = c.x > 0;
     walls.e.visible = c.x < W;
+    for (var ai = 0; ai < accents.length; ai++) accents[ai].m.visible = walls[accents[ai].w].visible;
     ceiling.visible = c.y < H - 0.02 && c.x > 0 && c.x < W && c.z > 0 && c.z < D;
     renderer.render(scene, camera);
     requestAnimationFrame(loop);
